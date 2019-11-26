@@ -75,7 +75,7 @@ resource "aws_api_gateway_resource" "this" {
 }
 
 resource "aws_api_gateway_rest_api" "this" {
-  name   = "this"
+  name   = "${module.resource_naming.name}"
   policy = "${data.aws_iam_policy_document.acl.json}"
 
   tags {
