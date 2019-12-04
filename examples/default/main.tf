@@ -42,5 +42,5 @@ module "assumed_role2" {
 }
 
 output "assumed_role_arns" {
-  value = "${module.assumed_role1.role_arn} \n ${module.assumed_role2.role_arn} "
+  value = "${list(module.assumed_role1.role_arn, module.assumed_role2.role_arn)}"
 }

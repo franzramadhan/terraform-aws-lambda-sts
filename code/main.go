@@ -25,6 +25,7 @@ type request struct {
 }
 
 type Credential struct {
+	AssumedRoleARN  string    `json:"ASSUMED_ROLE_ARN"`
 	AccessKeyId     string    `json:"AWS_ACCESS_KEY_ID"`
 	SecretAccessKey string    `json:"AWS_SECRET_ACCESS_KEY"`
 	SessionToken    string    `json:"AWS_SESSION_TOKEN"`
@@ -76,7 +77,7 @@ func serveRequest(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResp
 		var creds *credentials.Credentials
 		creds = stscreds.NewCredentials(sess, roleARN, func(p *stscreds.AssumeRoleProvider) {
 			p.Duration = time.Duration(tokenDuration) * time.Second
-			p.ExpiryWindow = time.Duration(expiryWindow)
+			p.ExpiryWindow = time.Duration(expiryWindow) * time.Second
 		})
 		conf.Credentials = creds
 	} else {
@@ -99,6 +100,7 @@ func serveRequest(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResp
 		SecretAccessKey: creds.SecretAccessKey,
 		SessionToken:    creds.SessionToken,
 		Expiry:          exp,
+		AssumedRoleARN:  roleARN,
 	}
 
 	response, err := json.Marshal(cr)

@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## v0.2.1 (Dec 05, 2019)
+
+NOTES:
+
+* Fix bug for wrong units of `expiry_window`
+* Updated examples
+* Updated README
+
+BUG FIXES:
+
+* Fix `expiry_window` unit to second
+* Adjust generated json response
+
 ## v0.2.0 (Dec 04, 2019)
 
 NOTES:

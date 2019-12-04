@@ -10,10 +10,10 @@ It will be useful when we need to enable AWS resource access to services / entit
   - [Table of Content](#table-of-content)
   - [Prerequisites](#prerequisites)
     - [Default](#default)
-    - [Predefined URL](#predefined-url)
+    - [Custom Domain](#custom-domain)
   - [Dependencies](#dependencies)
   - [Quick Start](#quick-start)
-  - [Sample Payload](#sample-payload)
+    - [Sample Request and Response](#sample-request-and-response)
   - [Limitation](#limitation)
   - [Contributing](#contributing)
   - [Contributor](#contributor)
@@ -27,7 +27,7 @@ It will be useful when we need to enable AWS resource access to services / entit
 - IAM Roles with required IAM policies.
 - Configure [Trusted Relationship](https://aws.amazon.com/premiumsupport/knowledge-center/iam-assume-role-cli/) in assumed IAM Roles after lambda function provisioned
 
-### Predefined URL
+### Custom Domain
 
 Aside of [default](#default) prerequisites, here are some additional resource to be provisioned prior this module usage:
 
@@ -48,9 +48,11 @@ Aside of [default](#default) prerequisites, here are some additional resource to
 - Go to `examples` and go to each scenario
 - Follow instruction in `README.md`
 
-## Sample Payload
+### Sample Request and Response
 
-```
+Request:
+
+```curl
 curl -X POST \
   https://<INVOKE URL of API Gateway> \
   -H 'Content-Type: application/json' \
@@ -61,15 +63,33 @@ curl -X POST \
 }'
 ```
 
+Response:
+
+```json
+{
+    "ASSUMED_ROLE_ARN": "arn:aws:iam::743977200366:role/crossaccount/testing2/testing2-a3124c28e3da7484",
+    "AWS_ACCESS_KEY_ID": "ASIAABCNLASCNLASCNASD",
+    "AWS_SECRET_ACCESS_KEY": "TQ57ArFsQ2lFfWC2Kalsw50dfFpHQi",
+    "AWS_SESSION_TOKEN": "FwoGZXIvYXdzEBMaDKLMLykeAkasdhkahdkadasdaJKCiWvYQaBA6qNfy2nMC5NlVvWWZeGP7CjOnRA8e5Dkt8DVOtBQVNnEQ/e9tdSeonUvxYckTGrpk+Cw56tplpgnFHEVT+Zd4MMOr36Wf2oBphC6rXUGHawT8lnY2FWSaArE4eZDz284MtzTIBKrqr7tA/Q86fCW73cAb6Nma8+A3UUN2Ag4wn0XJcWLt6gz1Oh89hiZipsI4v/jAZtzOiSIX9xCjzrPMIj6biKPSunEJG9Cil2Z/vBTItK8qBhT9dKPPt+QaTBcbsK7I/rIMGAATOVBXjm022D8sgR8mf3yGJzcCsr60X",
+    "AWS_SESSION_TOKEN_EXPIRES_AT": "2019-11-03T18:30:35Z"
+}
+```
+
+
 `assumed_role_arn` is mandatory field. And should be filled with ARN of IAM role that you want to get credentials from.
 
 If omitted, `token_duration` and `expiry_window` will have `3600` and `0` as default value.
+
+See [AssumeRoleProvider](https://docs.aws.amazon.com/sdk-for-go/api/aws/credentials/stscreds/#AssumeRoleProvider) of [stscreds](https://docs.aws.amazon.com/sdk-for-go/api/aws/credentials/stscreds)
 
 ## Limitation
 
 [Session Duration Limit for Role chaining](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_terms-and-concepts.html)
 ```
-Role chaining limits your AWS CLI or AWS API role session to a maximum of one hour. When you use the AssumeRole API operation to assume a role, you can specify the duration of your role session with the DurationSeconds parameter. You can specify a parameter value of up to 43200 seconds (12 hours), depending on the maximum session duration setting for your role. However, if you assume a role using role chaining and provide a DurationSeconds parameter value greater than one hour, the operation fails.
+Role chaining limits your AWS CLI or AWS API role session to a maximum of one hour. 
+When you use the AssumeRole API operation to assume a role, you can specify the duration of your role session with the DurationSeconds parameter. 
+You can specify a parameter value of up to 43200 seconds (12 hours), depending on the maximum session duration setting for your role.
+However, if you assume a role using role chaining and provide a DurationSeconds parameter value greater than one hour, the operation fails.
 ```
 
 ## Contributing
