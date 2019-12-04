@@ -45,12 +45,6 @@ resource "aws_lambda_function" "this" {
   runtime          = "go1.x"
   memory_size      = 128
 
-  environment {
-    variables = {
-      ASSUMED_ROLE_ARN = "${var.assumed_role_arn}"
-    }
-  }
-
   tags {
     Service       = "${var.service_name}"
     ProductDomain = "${var.product_domain}"
@@ -90,7 +84,7 @@ resource "aws_api_gateway_rest_api" "this" {
 resource "aws_api_gateway_method" "this" {
   rest_api_id   = "${aws_api_gateway_rest_api.this.id}"
   resource_id   = "${aws_api_gateway_resource.this.id}"
-  http_method   = "GET"
+  http_method   = "ANY"
   authorization = "NONE"
 }
 
@@ -127,7 +121,27 @@ resource "aws_api_gateway_deployment" "this" {
   ]
 
   rest_api_id = "${aws_api_gateway_rest_api.this.id}"
-  stage_name  = "v1"
+  stage_name  = "${var.stage_name}"
+}
+
+resource "aws_api_gateway_usage_plan" "this" {
+  name = "${module.resource_naming.name}"
+
+  api_stages {
+    api_id = "${aws_api_gateway_rest_api.this.id}"
+    stage  = "${aws_api_gateway_deployment.this.stage_name}"
+  }
+
+  quota_settings {
+    limit  = "${var.quota_limit}"
+    offset = "${var.quota_offset}"
+    period = "${var.quota_period}"
+  }
+
+  throttle_settings {
+    burst_limit = "${var.throttle_burst_limit}"
+    rate_limit  = "${var.throttle_rate_limit}"
+  }
 }
 
 resource "null_resource" "build" {

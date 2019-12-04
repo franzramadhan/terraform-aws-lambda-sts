@@ -1,9 +1,10 @@
 # How To Test
 
+Adjust input variables
+
 ## Manually
 
 ```
-- Change required variables
 - terraform init
 - terraform plan
 - terraform apply

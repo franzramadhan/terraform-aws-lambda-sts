@@ -4,15 +4,14 @@ provider "aws" {
 }
 
 module "this" {
-  source           = "../../"
-  environment      = "testing"
-  description      = "Testing lambda creation"
-  product_domain   = "dev"
-  service_name     = "test-lambda"
-  assumed_role_arn = "arn:aws:iam::12345678:role/ReadOnly"
+  source         = "../../"
+  environment    = "testing"
+  description    = "Testing lambda creation"
+  product_domain = "dev"
+  service_name   = "test-lambda"
 
   allowed_cidr = [
-    "139.0.104.0/28",
+    "10.32.0.0/16",
   ]
 }
 
@@ -20,6 +19,28 @@ output "url" {
   value = "${module.this.url}"
 }
 
-output "role_arn" {
-  value = "${module.this.role_arn}"
+module "assumed_role1" {
+  source            = "github.com/traveloka/terraform-aws-iam-role//modules/crossaccount?ref=v1.0.2"
+  product_domain    = "dev"
+  role_name         = "testing1"
+  environment       = "testing"
+  role_path         = "/testing1/"
+  role_description  = "testing role"
+  service_name      = "test-lambda1"
+  trusted_role_arns = ["${module.this.role_arn}"]
+}
+
+module "assumed_role2" {
+  source            = "github.com/traveloka/terraform-aws-iam-role//modules/crossaccount?ref=v1.0.2"
+  product_domain    = "dev"
+  role_name         = "testing2"
+  environment       = "testing"
+  role_path         = "/testing2/"
+  role_description  = "testing role"
+  service_name      = "test-lambda2"
+  trusted_role_arns = ["${module.this.role_arn}"]
+}
+
+output "assumed_role_arns" {
+  value = "${module.assumed_role1.role_arn} \n ${module.assumed_role2.role_arn} "
 }

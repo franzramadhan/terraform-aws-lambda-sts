@@ -13,6 +13,8 @@ It will be useful when we need to enable AWS resource access to services / entit
     - [Predefined URL](#predefined-url)
   - [Dependencies](#dependencies)
   - [Quick Start](#quick-start)
+  - [Sample Payload](#sample-payload)
+  - [Limitation](#limitation)
   - [Contributing](#contributing)
   - [Contributor](#contributor)
   - [License](#license)
@@ -44,8 +46,31 @@ Aside of [default](#default) prerequisites, here are some additional resource to
 - Install [dependencies](#dependencies)
 - Execute `pre-commit install`
 - Go to `examples` and go to each scenario
-- Change `assumed_role_arn` and `allowed_cidr` with your own setup
 - Follow instruction in `README.md`
+
+## Sample Payload
+
+```
+curl -X POST \
+  https://<INVOKE URL of API Gateway> \
+  -H 'Content-Type: application/json' \
+  -d '{
+	"assumed_role_arn" : "arn:aws:iam::743977200366:role/crossaccount/testing1/testing1-7142d92e739f6c6e",
+	"token_duration" : 1800,
+	"expiry_window" : 10
+}'
+```
+
+`assumed_role_arn` is mandatory field. And should be filled with ARN of IAM role that you want to get credentials from.
+
+If omitted, `token_duration` and `expiry_window` will have `3600` and `0` as default value.
+
+## Limitation
+
+[Session Duration Limit for Role chaining](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_terms-and-concepts.html)
+```
+Role chaining limits your AWS CLI or AWS API role session to a maximum of one hour. When you use the AssumeRole API operation to assume a role, you can specify the duration of your role session with the DurationSeconds parameter. You can specify a parameter value of up to 43200 seconds (12 hours), depending on the maximum session duration setting for your role. However, if you assume a role using role chaining and provide a DurationSeconds parameter value greater than one hour, the operation fails.
+```
 
 ## Contributing
 
