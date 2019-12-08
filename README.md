@@ -57,7 +57,7 @@ curl -X POST \
   https://<INVOKE URL of API Gateway> \
   -H 'Content-Type: application/json' \
   -d '{
-	"assumed_role_arn" : "arn:aws:iam::743977200366:role/crossaccount/testing1/testing1-7142d92e739f6c6e",
+	"assumed_role_arn" : "arn:aws:iam::743977200366:role/crossaccount/testing1/testing1-xxxxyyyyy",
 	"token_duration" : 1800,
 	"expiry_window" : 10
 }'
@@ -67,11 +67,11 @@ Response:
 
 ```json
 {
-    "ASSUMED_ROLE_ARN": "arn:aws:iam::743977200366:role/crossaccount/testing2/testing2-a3124c28e3da7484",
-    "AWS_ACCESS_KEY_ID": "ASIAABCNLASCNLASCNASD",
-    "AWS_SECRET_ACCESS_KEY": "TQ57ArFsQ2lFfWC2Kalsw50dfFpHQi",
-    "AWS_SESSION_TOKEN": "FwoGZXIvYXdzEBMaDKLMLykeAkasdhkahdkadasdaJKCiWvYQaBA6qNfy2nMC5NlVvWWZeGP7CjOnRA8e5Dkt8DVOtBQVNnEQ/e9tdSeonUvxYckTGrpk+Cw56tplpgnFHEVT+Zd4MMOr36Wf2oBphC6rXUGHawT8lnY2FWSaArE4eZDz284MtzTIBKrqr7tA/Q86fCW73cAb6Nma8+A3UUN2Ag4wn0XJcWLt6gz1Oh89hiZipsI4v/jAZtzOiSIX9xCjzrPMIj6biKPSunEJG9Cil2Z/vBTItK8qBhT9dKPPt+QaTBcbsK7I/rIMGAATOVBXjm022D8sgR8mf3yGJzcCsr60X",
-    "AWS_SESSION_TOKEN_EXPIRES_AT": "2019-11-03T18:30:35Z"
+  "Version": 1,
+  "AccessKeyId": "ASIA22OD7FLXHZ5ZFRXI",
+  "SecretAccessKey": "A7XSXJzgyoUb9u8R/kWB+kg3b1duGE/kBd58S2ft",
+  "SessionToken": "FwoGZXIvYXdzEHEaDFSm4muCfVBnkIEJ3yK3AZxaNCsP8Fs3r3a66SumCZXH2/jd3jrw7FuPdBPxto25WSlKFs14+T+Vim/hxPxeJFTtvDvyrP7OMJCUySLiiSsiVXmWneov/hoxQMm9xYzRxECwdpe3+LMV7y3CZ8om4HsbXvOnPJUwxV//r49fvaiu+3tMu09DQkKyMOn+OJLVmKTK0NpL5ytSAsD7MmqhdPDX9rKJoylumsRtyFFJBqxfuTXXjeyJDiIM3ngEo5E8FE0LvPuZPiirqLTvBTIta/EymgxiGTnJptCPD8ro7X1BaMntWVBb+dZtazXuyYzFY1MyMeY7Ix9XS8wC",
+  "Expiration": "2019-12-08T16:18:03Z"
 }
 ```
 

@@ -17,60 +17,61 @@ import (
 )
 
 var errorLogger = log.New(os.Stderr, "ERROR ", log.Llongfile)
+var infoLogger = log.New(os.Stdout, "INFO ", log.Llongfile)
 
 type request struct {
 	AssumedRoleARN string `json:"assumed_role_arn"`
 	TokenDuration  int64  `json:"token_duration"`
 	ExpiryWindow   int64  `json:"expiry_window"`
+	PrivateIP      string `json:"private_ip"`
+	Hostname       string `json:"hostname"`
 }
 
 type Credential struct {
-	AssumedRoleARN  string    `json:"ASSUMED_ROLE_ARN"`
-	AccessKeyId     string    `json:"AWS_ACCESS_KEY_ID"`
-	SecretAccessKey string    `json:"AWS_SECRET_ACCESS_KEY"`
-	SessionToken    string    `json:"AWS_SESSION_TOKEN"`
-	Expiry          time.Time `json:"AWS_SESSION_TOKEN_EXPIRES_AT"`
+	Version         int       `json:"Version"`
+	AccessKeyId     string    `json:"AccessKeyId"`
+	SecretAccessKey string    `json:"SecretAccessKey"`
+	SessionToken    string    `json:"SessionToken"`
+	Expiration      time.Time `json:"Expiration"`
 }
 
-func clientError(status int) (events.APIGatewayProxyResponse, error) {
+func respError(status int, message string) (events.APIGatewayProxyResponse, error) {
+	errorLogger.Println(errors.New(message))
+
 	return events.APIGatewayProxyResponse{
 		StatusCode: status,
-		Body:       http.StatusText(status),
-	}, nil
-}
-
-func serverError(err error, message string) (events.APIGatewayProxyResponse, error) {
-	errorLogger.Println(err.Error())
-
-	return events.APIGatewayProxyResponse{
-		StatusCode: http.StatusInternalServerError,
+		Headers:    map[string]string{"Content-Type": "application/json"},
 		Body:       string(message),
 	}, nil
 }
 
 func serveRequest(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	if req.HTTPMethod != "POST" {
-		return clientError(http.StatusMethodNotAllowed)
+		return respError(http.StatusMethodNotAllowed, "HTTP method is not allowed.")
 	}
 
-	if req.Headers["Content-Type"] != "application/json" {
-		return clientError(http.StatusNotAcceptable)
-	}
 	que := new(request)
 	err := json.Unmarshal([]byte(req.Body), que)
 	if err != nil {
-		return clientError(http.StatusUnprocessableEntity)
+		return respError(http.StatusUnprocessableEntity, "Cannot parse request.")
 	}
 
 	roleARN := que.AssumedRoleARN
 	tokenDuration := que.TokenDuration
 	expiryWindow := que.ExpiryWindow
+	clientPrivateIP := que.PrivateIP
+	clientHostname := que.Hostname
 
 	sess := session.Must(session.NewSession())
 	conf := aws.Config{}
 
 	if tokenDuration == 0 {
 		tokenDuration = 3600
+	}
+
+	if clientHostname == "" || clientPrivateIP == "" {
+		clientHostname = "N/A"
+		clientPrivateIP = "N/A"
 	}
 
 	if roleARN != "" {
@@ -81,33 +82,35 @@ func serveRequest(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResp
 		})
 		conf.Credentials = creds
 	} else {
-		return serverError(errors.New("Assumed role ARN is not set"), "Assumed role ARN is not set")
+		return respError(http.StatusBadRequest, "Assumed role ARN is not set.")
 	}
 
 	creds, err := conf.Credentials.Get()
 	if err != nil {
-		return serverError(err, "Unable to get credentials")
+		return respError(http.StatusInternalServerError, "Unable to get credentials.")
 	}
 
 	exp, err := conf.Credentials.ExpiresAt()
 
 	if err != nil {
-		return serverError(err, "Unable to get credential expiry time")
+		return respError(http.StatusInternalServerError, "Unable to get expiration time.")
 	}
 
 	cr := &Credential{
+		Version:         1,
 		AccessKeyId:     creds.AccessKeyID,
 		SecretAccessKey: creds.SecretAccessKey,
 		SessionToken:    creds.SessionToken,
-		Expiry:          exp,
-		AssumedRoleARN:  roleARN,
+		Expiration:      exp,
 	}
 
 	response, err := json.Marshal(cr)
 
 	if err != nil {
-		return serverError(err, "Unable to marshall credential")
+		return respError(http.StatusInternalServerError, "Unable to marshall credentials.")
 	}
+
+	infoLogger.Printf("Hostname: %s, Private IP: %s, Public IP : %s - retrieved %s credential from assumed role ARN %s", clientHostname, clientPrivateIP, req.RequestContext.Identity.SourceIP, creds.AccessKeyID, roleARN)
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: http.StatusOK,

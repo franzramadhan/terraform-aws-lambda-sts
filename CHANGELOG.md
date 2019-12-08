@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## v0.3.0 (Dec 08, 2019)
+
+NOTES:
+
+* Updated JSON response format
+* Updated README
+
+ENHANCEMENTS:
+
+* Updated code to have generic JSON response to comply with [Sourcing Credentials with an External Process](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sourcing-external.html)
+* Enhanced logging format
+* Improved error handling
+
 ## v0.2.1 (Dec 05, 2019)
 
 NOTES:
