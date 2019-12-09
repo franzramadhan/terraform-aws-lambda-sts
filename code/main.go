@@ -23,13 +23,15 @@ type request struct {
 	AssumedRoleARN string `json:"assumed_role_arn"`
 	TokenDuration  int64  `json:"token_duration"`
 	ExpiryWindow   int64  `json:"expiry_window"`
+	ExternalID     string `json:"external_id"`
 	PrivateIP      string `json:"private_ip"`
 	Hostname       string `json:"hostname"`
 }
 
+// Credential is a struct to store retrieved STS credentials
 type Credential struct {
 	Version         int       `json:"Version"`
-	AccessKeyId     string    `json:"AccessKeyId"`
+	AccessKeyID     string    `json:"AccessKeyId"`
 	SecretAccessKey string    `json:"SecretAccessKey"`
 	SessionToken    string    `json:"SessionToken"`
 	Expiration      time.Time `json:"Expiration"`
@@ -61,6 +63,7 @@ func serveRequest(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResp
 	expiryWindow := que.ExpiryWindow
 	clientPrivateIP := que.PrivateIP
 	clientHostname := que.Hostname
+	externalID := que.ExternalID
 
 	sess := session.Must(session.NewSession())
 	conf := aws.Config{}
@@ -76,13 +79,21 @@ func serveRequest(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResp
 
 	if roleARN != "" {
 		var creds *credentials.Credentials
-		creds = stscreds.NewCredentials(sess, roleARN, func(p *stscreds.AssumeRoleProvider) {
-			p.Duration = time.Duration(tokenDuration) * time.Second
-			p.ExpiryWindow = time.Duration(expiryWindow) * time.Second
-		})
+		if externalID != "" {
+			creds = stscreds.NewCredentials(sess, roleARN, func(p *stscreds.AssumeRoleProvider) {
+				p.Duration = time.Duration(tokenDuration) * time.Second
+				p.ExpiryWindow = time.Duration(expiryWindow) * time.Second
+				p.ExternalID = &externalID
+			})
+		} else {
+			creds = stscreds.NewCredentials(sess, roleARN, func(p *stscreds.AssumeRoleProvider) {
+				p.Duration = time.Duration(tokenDuration) * time.Second
+				p.ExpiryWindow = time.Duration(expiryWindow) * time.Second
+			})
+		}
 		conf.Credentials = creds
 	} else {
-		return respError(http.StatusBadRequest, "Assumed role ARN is not set.")
+		return respError(http.StatusBadRequest, "Assumed role ARN cannot be empty.")
 	}
 
 	creds, err := conf.Credentials.Get()
@@ -98,7 +109,7 @@ func serveRequest(req events.APIGatewayProxyRequest) (events.APIGatewayProxyResp
 
 	cr := &Credential{
 		Version:         1,
-		AccessKeyId:     creds.AccessKeyID,
+		AccessKeyID:     creds.AccessKeyID,
 		SecretAccessKey: creds.SecretAccessKey,
 		SessionToken:    creds.SessionToken,
 		Expiration:      exp,

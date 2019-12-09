@@ -50,7 +50,7 @@ Aside of [default](#default) prerequisites, here are some additional resource to
 
 ### Sample Request and Response
 
-Request:
+Request: 
 
 ```curl
 curl -X POST \
@@ -59,6 +59,7 @@ curl -X POST \
   -d '{
 	"assumed_role_arn" : "arn:aws:iam::743977200366:role/crossaccount/testing1/testing1-xxxxyyyyy",
 	"token_duration" : 1800,
+  "external_id" : "12312312391231893knjsdkakbsdnaksdjbak1231213"
 	"expiry_window" : 10
 }'
 ```
@@ -80,7 +81,11 @@ Response:
 
 If omitted, `token_duration` and `expiry_window` will have `3600` and `0` as default value.
 
-See [AssumeRoleProvider](https://docs.aws.amazon.com/sdk-for-go/api/aws/credentials/stscreds/#AssumeRoleProvider) of [stscreds](https://docs.aws.amazon.com/sdk-for-go/api/aws/credentials/stscreds)
+`external_id` is optional when you configured it in IAM role trust_relationship.
+
+See:
+- [AssumeRoleProvider](https://docs.aws.amazon.com/sdk-for-go/api/aws/credentials/stscreds/#AssumeRoleProvider)
+- [External ID for IAM Role](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html)
 
 ## Limitation
 

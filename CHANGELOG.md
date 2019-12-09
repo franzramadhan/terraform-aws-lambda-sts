@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## v0.4.0 (Dec 09, 2019)
+
+NOTES:
+
+* Updated examples
+* Updated README
+
+ENHANCEMENTS:
+
+* Added support for externalID
+* Apply recommendation from golint
+* Improved error handling
+
 ## v0.3.0 (Dec 08, 2019)
 
 NOTES:
