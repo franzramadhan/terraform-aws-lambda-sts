@@ -37,7 +37,7 @@ resource "random_string" "external_id" {
 
   length  = 32
   special = false
-  upper   = false
+  upper   = true
 }
 
 module "role_external" {

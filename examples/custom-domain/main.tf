@@ -17,7 +17,7 @@ module "this" {
 }
 
 output "url" {
-  value = "${module.this.url}"
+  value = "https://${module.this.url}/${module.this.stage_name}"
 }
 
 module "role_crossaccount" {
@@ -38,14 +38,14 @@ resource "random_string" "external_id" {
 
   length  = 32
   special = false
-  upper   = false
+  upper   = true
 }
 
 module "role_external" {
   source           = "github.com/traveloka/terraform-aws-iam-role//modules/external?ref=v1.0.2"
   environment      = "testing"
   product_domain   = "dev"
-  role_name        = "testing-external"
+  role_name        = "testing-external-role"
   role_description = "testing role for external access with external ID"
   account_id       = "${module.this.role_arn}"
   external_id      = "${random_string.external_id.result}"

@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## v0.4.1 (Dec 17, 2019)
+
+NOTES:
+
+* Updated examples
+* Added `api_gateway_deployment` `stage_name` as output
+
+BUG FIXES:
+
+* Fix `Forbidden` access due to unmapped custom domain
+
 ## v0.4.0 (Dec 09, 2019)
 
 NOTES:
