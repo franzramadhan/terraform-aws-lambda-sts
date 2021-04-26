@@ -59,7 +59,7 @@ curl -X POST \
   -d '{
 	"assumed_role_arn" : "arn:aws:iam::743977200366:role/crossaccount/testing1/testing1-xxxxyyyyy",
 	"token_duration" : 1800,
-  "external_id" : "12312312391231893knjsdkakbsdnaksdjbak1231213"
+        "external_id" : "12312312391231893knjsdkakbsdnaksdjbak1231213",
 	"expiry_window" : 10
 }'
 ```
