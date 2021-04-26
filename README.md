@@ -57,9 +57,9 @@ curl -X POST \
   https://<INVOKE URL of API Gateway> \
   -H 'Content-Type: application/json' \
   -d '{
-	"assumed_role_arn" : "arn:aws:iam::743977200366:role/crossaccount/testing1/testing1-xxxxyyyyy",
+	"assumed_role_arn" : "arn:aws:iam::XXXXXXXXXXXX:role/crossaccount/XXXXXXXXXXXX/XXXXXXXXXXXX-XXXXXXXXXXXX",
 	"token_duration" : 1800,
-        "external_id" : "12312312391231893knjsdkakbsdnaksdjbak1231213",
+        "external_id" : "XXXXXXXXXXXX",
 	"expiry_window" : 10
 }'
 ```
@@ -69,9 +69,9 @@ Response:
 ```json
 {
   "Version": 1,
-  "AccessKeyId": "ASIA22OD7FLXHZ5ZFRXI",
-  "SecretAccessKey": "A7XSXJzgyoUb9u8R/kWB+kg3b1duGE/kBd58S2ft",
-  "SessionToken": "FwoGZXIvYXdzEHEaDFSm4muCfVBnkIEJ3yK3AZxaNCsP8Fs3r3a66SumCZXH2/jd3jrw7FuPdBPxto25WSlKFs14+T+Vim/hxPxeJFTtvDvyrP7OMJCUySLiiSsiVXmWneov/hoxQMm9xYzRxECwdpe3+LMV7y3CZ8om4HsbXvOnPJUwxV//r49fvaiu+3tMu09DQkKyMOn+OJLVmKTK0NpL5ytSAsD7MmqhdPDX9rKJoylumsRtyFFJBqxfuTXXjeyJDiIM3ngEo5E8FE0LvPuZPiirqLTvBTIta/EymgxiGTnJptCPD8ro7X1BaMntWVBb+dZtazXuyYzFY1MyMeY7Ix9XS8wC",
+  "AccessKeyId": "XXXXXXXXXXXX",
+  "SecretAccessKey": "XXXXXXXXXXXX",
+  "SessionToken": "XXXXXXXXXXXX",
   "Expiration": "2019-12-08T16:18:03Z"
 }
 ```
